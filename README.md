@@ -1,64 +1,107 @@
-# Cybersecurity Lab Setup: Kali Linux on Oracle VirtualBox (External Drive)
+# Cybersecurity & Ethical Hacking Lab Setup: Kali Linux on Oracle VirtualBox
 
-A fully optimized, isolated, and portable cybersecurity testing laboratory built using **Oracle VM VirtualBox** and **Kali Linux**, configured to run from an external portable hard drive to protect internal system storage.
+A comprehensive step-by-step technical guide for establishing an isolated, portable cybersecurity testing laboratory using **Kali Linux** and **Oracle VM VirtualBox**. This setup features external storage optimization, custom NAT network configuration, DAD-timeout interface tweaking, and baseline system snapshotting.
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Skill-Cybersecurity-404040?style=flat-square&labelColor=C00000" />
-  <img src="https://img.shields.io/badge/Ver-Virtualbox%20v7.2-0070C0?style=flat-square&labelColor=000000" />
-  <img src="https://img.shields.io/badge/Kali%20Linux-v2026.3-E87500?style=flat-square&labelColor=000000&logo=kalilinux&logoColor=white" />
-  <img src="https://img.shields.io/badge/Skill-Linux-404040?style=flat-square&labelColor=C00000" />
-  <img src="https://img.shields.io/badge/Network-10.0.0.0%2F24-238F89?style=flat-square&labelColor=000000" />
-  <img src="https://img.shields.io/badge/Penetration%20Testing-C00000?style=flat-square&labelColor=000000&logo=kalilinux&logoColor=white" />
-  <img src="https://img.shields.io/badge/Skill-Virtualization-404040?style=flat-square&labelColor=C00000" />
-  <img src="https://img.shields.io/badge/GitHub-404040?style=flat-square&labelColor=0070C0&logo=github&logoColor=white" />
-  <img src="https://img.shields.io/badge/Kali%20Linux-404040?style=flat-square&labelColor=C00000&logo=kalilinux&logoColor=white" />
-  <img src="https://img.shields.io/badge/NetworkWalks-404040?style=flat-square&labelColor=C00000" />
-  <img src="https://img.shields.io/badge/Ethical%20Hacking-E87500?style=flat-square&labelColor=000000&logo=kalilinux&logoColor=white" />
+  <img src="https://img.shields.io/badge/Skill-Cybersecurity-404040?style=flat-square&labelColor=C00000" />
+  <img src="https://img.shields.io/badge/Ver-Virtualbox%20v7.2-0070C0?style=flat-square&labelColor=000000" />
+  <img src="https://img.shields.io/badge/Kali%20Linux-v2026.3-E87500?style=flat-square&labelColor=000000&logo=kalilinux&logoColor=white" />
+  <img src="https://img.shields.io/badge/Skill-Linux-404040?style=flat-square&labelColor=C00000" />
+  <img src="https://img.shields.io/badge/Network-10.0.0.0%2F24-238F89?style=flat-square&labelColor=000000" />
+  <img src="https://img.shields.io/badge/Penetration%20Testing-C00000?style=flat-square&labelColor=000000&logo=kalilinux&logoColor=white" />
+  <img src="https://img.shields.io/badge/Skill-Virtualization-404040?style=flat-square&labelColor=C00000" />
+  <img src="https://img.shields.io/badge/GitHub-404040?style=flat-square&labelColor=0070C0&logo=github&logoColor=white" />
+  <img src="https://img.shields.io/badge/Kali%20Linux-404040?style=flat-square&labelColor=C00000&logo=kalilinux&logoColor=white" />
+  <img src="https://img.shields.io/badge/NetworkWalks-404040?style=flat-square&labelColor=C00000" />
+  <img src="https://img.shields.io/badge/Ethical%20Hacking-E87500?style=flat-square&labelColor=000000&logo=kalilinux&logoColor=white" />
 </p>
 
 ---
 
-## 🛠️ Tech Stack & Tools
-* **Hypervisor:** Oracle VM VirtualBox
-* **Operating System:** Kali Linux (VirtualBox Pre-built VM Image)
-* **Storage Strategy:** External Portable Hard Drive (saving internal C: drive space)
+## 📋 Table of Contents
+- [1. Prerequisites \& Tools Used](#1-prerequisites--tools-used)
+- [2. Download Optimization Strategy](#2-download-optimization-strategy)
+- [3. External Drive Storage Configuration](#3-external-drive-storage-configuration)
+- [4. NAT Network Configuration](#4-nat-network-configuration)
+- [5. Virtual Machine Import \& Execution](#5-virtual-machine-import--execution)
+- [6. Network Troubleshooting \& Interface Management](#6-network-troubleshooting--interface-management)
+- [7. Verification \& Network Connectivity Test](#7-verification--network-connectivity-test)
+- [8. System Snapshot \& Baseline Recovery](#8-system-snapshot--baseline-recovery)
+
+---
+
+## 1. Prerequisites & Tools Used
+* **Hypervisor:** Oracle VM VirtualBox (v7.0+)
+* **Guest OS:** Kali Linux (Pre-built VirtualBox Image `.7z`)
+* **Storage Location:** External Portable Hard Drive
 * **Download Accelerator:** Free Download Manager (FDM)
-* **Archive Extraction:** 7-Zip
+* **Archive Utility:** 7-Zip
+* **Network Protocol:** IPv4 NAT Network (DHCP Enabled)
 
 ---
 
-## ⚙️ Architecture & Design Rationale
-1. **Portable Storage Management:** To avoid cluttering the primary OS drive and to accommodate heavy virtual disk expansions (10GB+), the entire virtual machine directory is configured to reside on an external portable hard drive via VirtualBox's *Default Machine Folder* preferences.
-2. **Resilient Downloading:** Large virtual machine archives (~3.6 GB) frequently fail on standard unstable network connections when downloaded via web browsers due to session timeouts or resets. **Free Download Manager (FDM)** was utilized to enforce robust multi-threaded and resumable data streaming.
+## 2. Download Optimization Strategy
+Due to network instability, direct browser downloads of the 3.6 GB Kali Linux image frequently reset to 0%.
+
+### Solution Executed:
+1. Downloaded and installed **Free Download Manager (FDM)** from [freedownloadmanager.org](https://freedownloadmanager.org).
+2. Saved the raw download path directly to the external drive directory to conserve internal host storage.
+3. Extracted the compressed archive (`kali-linux-2026.3-virtualbox-amd64.7z`) using **7-Zip**.
 
 ---
 
-## 🚀 Step-by-Chief Installation Guide
+## 3. External Drive Storage Configuration
+To prevent the guest operating system and future virtual disks from consuming primary host C: drive storage:
 
-### 1. Handling Unstable Networks (Download Phase)
-* **Challenge:** Direct browser downloads of large VM files kept crashing or resetting to 0% due to network drops.
-* **Solution:** Used **Free Download Manager (FDM)** ([freedownloadmanager.org](https://freedownloadmanager.org)) to handle the 3.6 GB archive. FDM allows session pausing, error recovery, and seamless resumption across network glitches.
-
-### 2. File Extraction & Preparation
-* Downloaded the `.7z` pre-built VirtualBox image for Kali Linux.
-* Extracted the archive cleanly using **7-Zip** directly onto a dedicated folder within the portable external hard drive.
-
-### 3. Hypervisor & Virtual Drive Configuration
-* Configured Oracle VirtualBox **Preferences > General > Default Machine Folder** to point directly to the external portable hard drive directory.
-* Imported the appliance configuration file (`.vbox`) into VirtualBox.
-
-### 4. Network & Baseline Verification
-* Booted the Kali Linux virtual machine instance.
-* Verified proper network interface behavior (NAT / Wired connection settings).
-* Tested internet access (browsing and media playback verification).
-* **Snapshot Created:** Took a clean baseline system snapshot immediately after verification to preserve a stable initial state for future cybersecurity labs.
+1. Opened Oracle VirtualBox Manager.
+2. Navigated to **File > Preferences > General**.
+3. Set **Default Machine Folder** to point directly to the external portable hard drive (e.g., `E:\VirtualBox VMs`).
 
 ---
 
-## 📸 Lab Status & Verification
-* **Network Status:** Operational (Connected via VirtualBox Network Adapter)
-* **Storage Location:** External Portable Hard Drive 
-* **Current State:** Baseline Snapshot Active 🟢
+## 4. NAT Network Configuration
+A custom internal NAT Network was configured inside Oracle VirtualBox Manager to enable proper inter-VM routing and gateway traffic:
+
+* **Network Name:** `NatNetwork`
+* **IPv4 Prefix:** `10.0.0.0/24`
+* **DHCP Server:** Enabled
+
+![VirtualBox NAT Network Settings](1-screenshot-network-settings.png.png)
 
 ---
-*Created as part of practical cybersecurity internship preparation and lab architecture design.*
+
+## 5. Virtual Machine Import & Execution
+1. Imported the extracted `kali-linux-2026.3-virtualbox-amd64.vbox` appliance into VirtualBox.
+2. Verified machine resources (RAM, CPU allocation, Display, and Storage controllers).
+3. Attached Network Adapter 1 to **NAT Network** (`NatNetwork`).
+4. Booted the Kali Linux VM instance successfully.
+
+![Kali Linux Desktop Environment](2-screenshot-kali-linux.png.png)
+
+---
+
+## 6. Network Troubleshooting & Interface Management
+During network setup, Duplicate Address Detection (DAD) timeouts caused temporary connection drops on `Wired connection 1`.
+
+### Commands Executed in Kali Terminal:
+To optimize NetworkManager performance and eliminate DAD-related delays, the following terminal commands were executed:
+
+![kali linux network setting](3-screenshot-kali-network-settings.png.png)
+
+```bash
+# Disable DAD timeout on Wired Connection 1
+sudo nmcli connection modify "Wired connection 1" ipv4.dad-timeout 0
+
+# Restart network interface to apply settings
+sudo nmcli connection down "Wired connection 1"
+sudo nmcli connection up "Wired connection 1"
+```
+---
+## 7. Testing Network Connectivity
+Following the network troubleshooting and interface adjustments, web browsing was tested inside Kali Linux to confirm active WAN connectivity and secure internet access.
+
+* **URL Tested:** `https://www.google.com`
+* **DNS Resolution:** Functional
+* **Interface Status:** Active (`Wired connection 1`)
+
+![Kali Linux Network Connection Success](4-screenshot-kali-network-success.png.png)
